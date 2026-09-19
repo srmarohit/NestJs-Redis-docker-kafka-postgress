@@ -11,10 +11,11 @@
 // import { OrdersModule } from './orders-services/orders.module';
 // import configuration from './config';
 
-import { Module } from "@nestjs/common";
-import { BullModule } from "@nestjs/bullmq";
-import { AppController } from "./app.controller";
-import { VideoProcessor } from "./app.worker";
+import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
+import { AppController } from './app.controller';
+import { VideoProcessor } from './app.worker';
+import { VideoQueueEventListener } from './app-queue.events';
 
 // @Module({
 //   imports: [
@@ -45,25 +46,28 @@ import { VideoProcessor } from "./app.worker";
 // })
 // export class AppModule {}
 
-
 @Module({
-  imports: [BullModule.forRoot({
-    connection: {
-      host: 'localhost',
-      port: 6380,
-    },
-    defaultJobOptions: {
-      attempts: 3,
-      delay: 5000,
-    },
-  }),
-  BullModule.registerQueue({
-    name: 'video',
-  },{
-    name: 'my-queue2',
-  })
-],
+  imports: [
+    BullModule.forRoot({
+      connection: {
+        host: 'localhost',
+        port: 6380,
+      },
+      defaultJobOptions: {
+        attempts: 3,
+        delay: 5000,
+      },
+    }),
+    BullModule.registerQueue(
+      {
+        name: 'video',
+      },
+      {
+        name: 'my-queue2',
+      },
+    ),
+  ],
   controllers: [AppController],
-  providers: [VideoProcessor],
+  providers: [VideoProcessor, VideoQueueEventListener],
 })
 export class AppModule {}

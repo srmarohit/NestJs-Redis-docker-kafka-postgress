@@ -5,9 +5,9 @@
 // import { Roles } from './custom.decorator';
 // import { Role } from './users/enums/role.enum';
 
-import { InjectQueue } from "@nestjs/bullmq";
-import { Controller, Get, Inject, Post } from "@nestjs/common";
-import { Queue } from "bullmq";
+import { InjectQueue } from '@nestjs/bullmq';
+import { Controller, Get, Inject, Post } from '@nestjs/common';
+import { Queue } from 'bullmq';
 
 // @Controller()
 // export class AppController {
@@ -37,13 +37,9 @@ import { Queue } from "bullmq";
 //   }
 // }
 
-
 @Controller()
 export class AppController {
-
-  constructor(
-    @InjectQueue('video') private readonly videoQueue: Queue,
-  ) {}
+  constructor(@InjectQueue('video') private readonly videoQueue: Queue) {}
 
   @Get()
   getHello(): { message: string } {
@@ -52,15 +48,33 @@ export class AppController {
 
   @Get('process')
   async processVideo() {
-    await this.videoQueue.add('process', { filename: 'video.mp4', fileType: 'mp4' }, {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
+    await this.videoQueue.add(
+      'process', // Job name
+      { filename: 'video.mp4', fileType: 'mp4' },
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 1000,
+        },
       },
-    });
+    );
     return { message: 'Video processing job added to the queue.' };
   }
 
-
+  @Get('compress')
+  async compressVideo() {
+    await this.videoQueue.add(
+      'compress', // Job name
+      { filename: 'video.mp4', fileType: 'mp4' },
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 1000,
+        },
+      },
+    );
+    return { message: 'Video compression job added to the queue.' };
+  }
 }
