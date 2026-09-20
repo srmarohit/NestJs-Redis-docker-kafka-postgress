@@ -1,34 +1,39 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
-import { AppService } from './app.service';
-import { JwtAuthGuard } from './auth/strategy/jwt-auth.guard';
-import { RolesGuard } from './auth/strategy/roles.guard';
-import { Roles } from './custom.decorator';
-import { Role } from './users/enums/role.enum';
+import { Controller, Get } from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronJob } from 'cron';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private scheduleRegistry: SchedulerRegistry) {}
 
   @Get()
-  getHello(): { message: string } {
-    return this.appService.getHello();
+  getHello(): string {
+    return 'Hello World!';
   }
 
-  @Get('/health-check')
-  healthCheck(): { message: string } {
-    return this.appService.healthCheck();
+  @Get('create-cronjob')
+  createCronJob(): string {
+    // Logic to create a cron job dynamically
+    const cronJob = new CronJob('*/5 * * * * *', () => {
+      console.log('Cron job executed at:', new Date().toISOString());
+    });
+
+    this.scheduleRegistry.addCronJob('backup-db', cronJob);
+    cronJob.start();
+    return 'Cron job created!';
   }
 
-  @Post('/echo')
-  @UseGuards(JwtAuthGuard)
-  echo(@Body() body: Record<string, unknown>) {
-    return body;
+  @Get('delete-cronjob')
+  deleteCronJob(): string {
+    // Logic to delete a cron job dynamically
+    this.scheduleRegistry.deleteCronJob('backup-db');
+    return 'Cron job deleted!';
   }
 
-  @Post('/premium-echo')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.premium)
-  premiumEcho(@Body() body: Record<string, unknown>) {
-    return body;
+  @Get('list-cronjobs')
+  listCronJobs(): string[] {
+    // Logic to list all cron jobs
+    const cronJobs = this.scheduleRegistry.getCronJobs();
+    return Array.from(cronJobs.keys());
   }
 }
