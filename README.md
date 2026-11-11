@@ -1,100 +1,76 @@
-# Prime NestJS
+# 🚀 NestJS Starter: PostgreSQL, Redis, Kafka & Docker
 
-**Stop wiring up auth, databases, and configs from scratch. Start building your product.**
+A production-ready **NestJS** backend starter kit. Clone it, configure your `.env`, and start building: authentication, database, API docs, code quality tooling and Docker setup are already in place.
 
-<p align="center">
-  <img src="documentation/prime-nestjs.jpg" width="600" alt="prime-nestjs">
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<p align="center">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://snyk.io/test/github/srmarohit/prime-nestjs"><img src="https://snyk.io/test/github/srmarohit/prime-nestjs/badge.svg" alt="Known Vulnerabilities"></a>
-  <img src="https://img.shields.io/github/last-commit/srmarohit/prime-nestjs.svg" alt="GitHub last commit">
-  <img src="https://img.shields.io/github/stars/srmarohit/prime-nestjs.svg?style=social&label=Star" alt="GitHub stars">
-  <img src="https://img.shields.io/github/forks/srmarohit/prime-nestjs.svg?style=social&label=Fork" alt="GitHub forks">
-</p>
+---
 
-Production-ready NestJS starter kit. Clone it, configure your `.env`, and ship — auth, database, docs, and Docker are already done.
+## ✨ What's Inside
 
-### What's Inside
-
-- **JWT Authentication** (RSA256) with Role-Based Access Control
+- **JWT authentication** (RS256 keys) with **role-based access control**
 - **PostgreSQL + TypeORM** with migrations and connection pooling
-- **Swagger API Docs** auto-generated at `/api`
-- **Docker Compose** — one command to run everything
-- **Testing** with Jest (unit + e2e)
-- **Code Quality** with ESLint, Prettier, Husky, commitlint
-- **Security** hardened with Helmet and CORS
-- **Health Checks** built-in for production monitoring
+- **Swagger API docs**, auto-generated at `/api`
+- **Docker Compose**: one command to run all services
+- **Testing** with Jest (unit and e2e)
+- **Code quality**: ESLint, Prettier, Husky, commitlint
+- **Security**: Helmet and CORS
+- **Health checks** for production monitoring
+- **Feature modules** for users and tasks as working examples
 
-## Quick Start
+<!-- TODO: Redis (caching) and Kafka (messaging) are part of the repo name. Confirm they are wired in src/ and docker-compose.yml, then describe them here. -->
 
-### Prerequisites
+---
 
-- Node.js >= 20.0.0
-- PostgreSQL (or use Docker)
+## 🧰 Tech Stack
 
-### Setup
+| Area          | Technology                          |
+| ------------- | ----------------------------------- |
+| Framework     | NestJS (TypeScript)                 |
+| Database      | PostgreSQL with TypeORM             |
+| Auth          | JWT (RSA key pair), RBAC guards     |
+| API docs      | Swagger / OpenAPI                   |
+| Testing       | Jest                                |
+| Tooling       | ESLint, Prettier, Husky, commitlint |
+| Infrastructure| Docker, Docker Compose              |
+
+---
+
+## ✅ Prerequisites
+
+- Node.js **20 or later**
+- PostgreSQL (or Docker, which provides it)
+- OpenSSL (to generate the JWT key pair)
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/srmarohit/prime-nestjs.git
-cd prime-nestjs
+git clone https://github.com/srmarohit/NestJs-Redis-docker-kafka-postgress.git
+cd NestJs-Redis-docker-kafka-postgress
 npm install
 cp .env.example .env
+```
 
-# Start with Docker (recommended)
+Then choose one:
+
+```bash
+# Run everything with Docker (recommended)
 npm run docker:up
 
-# OR start locally
+# Or run locally with hot reload
 npm run start:dev
 ```
 
-API available at `http://localhost:3000` | Swagger docs at `http://localhost:3000/api`
+- API: **http://localhost:3000**
+- Swagger docs: **http://localhost:3000/api**
 
-## Development
+---
 
-### Available Scripts
+## 🔐 Environment Variables
 
-```bash
-npm run start:dev     # Development with hot-reload
-npm run build         # Build for production
-npm run start:prod    # Run production build
-npm run test          # Run unit tests
-npm run test:e2e      # Run e2e tests
-npm run test:cov      # Generate coverage report
-npm run lint          # Lint and fix code
-npm run format        # Format code with Prettier
-```
-
-### Database
-
-```bash
-npm run schema:sync              # Sync database schema (dev only)
-npm run migration:generate       # Generate migration from changes
-npm run migration:run            # Apply pending migrations
-npm run migration:revert         # Revert last migration
-```
-
-### Docker
-
-```bash
-npm run docker:build   # Build containers
-npm run docker:up      # Start all services
-npm run docker:down    # Stop all services
-```
-
-## Project Structure
-
-```
-src/
-├── auth/           # JWT authentication & guards
-├── config/         # App configuration
-├── tasks/          # Task management feature
-├── users/          # User management
-└── main.ts         # Application entry
-```
-
-## Environment Variables
+Copy `.env.example` to `.env` and adjust:
 
 ```env
 # Database
@@ -108,43 +84,106 @@ POSTGRES_DB=postgres
 PORT=3000
 NODE_ENV=development
 
-# Auth (generate your own keys - see Security section)
+# Auth (generate your own keys, see below)
 PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----..."
 PUBLIC_KEY="-----BEGIN PUBLIC KEY-----..."
 ```
 
-## Security
+> Never commit `.env` or your private key. Change the default database password before deploying.
 
-### Generate RSA Keys
+### Generate the RSA keys
 
 ```bash
-# Generate private key
+# Private key
 openssl genrsa -out private_key.pem 2048
 
-# Extract public key
+# Public key
 openssl rsa -in private_key.pem -pubout -out public_key.pem
 
-# Format for .env (single line)
+# Format as a single line for .env
 awk 'NF {sub(/\r/, ""); printf"%s\\n",$0;}' private_key.pem
 awk 'NF {sub(/\r/, ""); printf"%s\\n",$0;}' public_key.pem
 ```
 
-## Contributing
+---
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing`)
-3. Commit changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing`)
-5. Open a Pull Request
+## 📜 Available Scripts
 
-## License
+### Application
 
-[MIT](LICENSE) © [Joseph Goksu](https://srmarohit.com)
+```bash
+npm run start:dev     # Development with hot reload
+npm run build         # Build for production
+npm run start:prod    # Run the production build
+```
+
+### Testing and quality
+
+```bash
+npm run test          # Unit tests
+npm run test:e2e      # End-to-end tests
+npm run test:cov      # Coverage report
+npm run lint          # Lint and fix
+npm run format        # Format with Prettier
+```
+
+### Database
+
+```bash
+npm run schema:sync          # Sync schema (development only)
+npm run migration:generate   # Generate a migration from entity changes
+npm run migration:run        # Apply pending migrations
+npm run migration:revert     # Revert the last migration
+```
+
+### Docker
+
+```bash
+npm run docker:build   # Build containers
+npm run docker:up      # Start all services
+npm run docker:down    # Stop all services
+```
 
 ---
 
-If this saved you time, consider giving it a star. It helps others find it.
+## 📁 Project Structure
 
-## Star History
+```
+.
+├── src/
+│   ├── auth/            # JWT authentication and guards
+│   ├── config/          # Application configuration
+│   ├── tasks/           # Task management feature
+│   ├── users/           # User management
+│   └── main.ts          # Application entry point
+├── test/                # e2e tests
+├── documentation/       # Images and docs
+├── .github/             # GitHub workflows and templates
+├── Dockerfile
+├── docker-compose.yml
+├── endpoints.json       # API endpoint collection
+├── nest-cli.json
+├── setup.sh
+└── .env.example
+```
 
-[![Star History Chart](https://api.star-history.com/svg?repos=srmarohit/prime-nestjs&type=Timeline)](https://star-history.com/#srmarohit/prime-nestjs&Timeline)
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing`
+3. Commit using Conventional Commits: `git commit -m "feat: add amazing feature"`
+4. Push the branch: `git push origin feature/amazing`
+5. Open a Pull Request
+
+Please read the [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md).
+
+---
+
+## 📄 License
+
+Released under the [MIT License](LICENSE).
+
+## Author
+Rohit Sharma (@srmarohit)
